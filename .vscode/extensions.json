@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
+    "EditorConfig.EditorConfig",
+    "mhutchie.git-graph",
+    "mtxr.sqltools-driver-pg",
+    "mtxr.sqltools",
+    "Orta.vscode-jest",
+    "esbenp.prettier-vscode",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg"
+  ]
+}
