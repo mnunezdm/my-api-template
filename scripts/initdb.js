@@ -71,7 +71,6 @@ if (argv.dataFile) {
       data.push(BaseObject.fromCsvRow(row));
     })
     .on('end', () => {
-      console.log(data[0].toRow());
       try {
         data.forEach(item => {
           try {
