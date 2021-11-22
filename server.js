@@ -47,7 +47,7 @@ const notConnected = (req, res, next) => {
   }
 };
 
-const assureConntected = (request, response, next) => {
+const assureConnected = (request, response, next) => {
   if (request.isAuthenticated()) {
     next();
   } else {
@@ -95,7 +95,7 @@ const buildExpressApp = db => {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  app.get('/me', assureConntected, (req, res) => {
+  app.get('/me', assureConnected, (req, res) => {
     res.status(200).json({
       data: req.user.toJson(),
     });
@@ -134,7 +134,7 @@ const buildExpressApp = db => {
     })(request, response),
   );
 
-  app.delete('/logout', assureConntected, (request, response) => {
+  app.delete('/logout', assureConnected, (request, response) => {
     request.logout(), response.status(204).send();
   });
 
@@ -153,7 +153,7 @@ const buildExpressApp = db => {
       } else {
         console.error(e);
         response.status(500).send({
-          message: 'An error occured while registering the user',
+          message: 'An error occurred while registering the user',
           error: e,
         });
       }
