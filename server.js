@@ -12,7 +12,7 @@ const pgSession = require('connect-pg-simple')(session);
 const { Pool } = require('./src/models/database');
 
 const { getDbConfig } = require('./src/config');
-const { schema } = require('./src/graphql');
+const { schema } = require('./src/graphql/schema');
 const labels = require('./src/labels');
 
 const cors = require('cors');
