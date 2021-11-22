@@ -1,6 +1,8 @@
 const fs = require('fs');
 const https = require('https');
 
+const chalk = require('chalk');
+
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
 const passport = require('passport');
@@ -174,7 +176,11 @@ const buildExpressApp = db => {
 if (require.main === module) {
   const db = new Pool(getDbConfig());
 
-  db.connect();
+  db.connect()
+    .then(() => console.log('[server] db connected'))
+    .catch(error =>
+      console.error(chalk.red`[fatal] Could not connect to db: ${error}`),
+    );
 
   const portNumber = Number(process.env.PORT);
 
@@ -203,7 +209,9 @@ if (require.main === module) {
         );
       });
   } catch (e) {
-    console.warn('[server] Could not start https server', e);
+    console.warn(
+      chalk.magenta`[warning] Could not start https server: ${e.message}`,
+    );
   }
 }
 
