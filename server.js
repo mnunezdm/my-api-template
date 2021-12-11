@@ -18,6 +18,7 @@ import { errorNoDbConnection, startGraphqlMessage } from './src/labels.js';
 
 import initializePassport from './src/passport.js';
 import User from './src/models/user.js';
+import Logger from './src/utils/logger.js';
 
 const pgSession = connectPgSimple(session);
 const rootValue = {
@@ -151,7 +152,7 @@ export const buildExpressApp = db => {
       if (e === 'ERROR_USER_DUPLICATE') {
         response.status(409).send({ message: 'User already exist' });
       } else {
-        console.error(e);
+        Logger.error(e);
         response.status(500).send({
           message: 'An error occurred while registering the user',
           error: e,
@@ -177,9 +178,9 @@ if (esMain(import.meta)) {
   const db = new Pool(getDbConfig());
 
   db.connect()
-    .then(() => console.log('[server] db connected'))
+    .then(() => Logger.log('[server] db connected'))
     .catch(error =>
-      console.error(chalk.red`[fatal] Could not connect to db: ${error}`),
+      Logger.error(chalk.red`[fatal] Could not connect to db: ${error}`),
     );
 
   const portNumber = Number(process.env.PORT);
@@ -187,7 +188,7 @@ if (esMain(import.meta)) {
   const app = buildExpressApp(db);
 
   app.listen(portNumber, () => {
-    console.log(
+    Logger.log(
       `[server] ${startGraphqlMessage} http://localhost:${portNumber}/graphql`,
     );
   });
@@ -200,13 +201,13 @@ if (esMain(import.meta)) {
       },
       app,
     ).listen(portNumber + 1, () => {
-      console.log(
+      Logger.log(
         `[server] ${startGraphqlMessage} https://localhost:${portNumber +
           1}/graphql`,
       );
     });
   } catch (e) {
-    console.warn(
+    Logger.warn(
       chalk.magenta`[warning] Could not start https server: ${e.message}`,
     );
   }

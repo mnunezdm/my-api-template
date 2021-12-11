@@ -1,8 +1,9 @@
 import { existsSync } from 'fs';
 import dotenv from 'dotenv';
+import Logger from './utils/logger.js';
 
 if (process.env.NODE_ENV !== 'production' && !process.env.GITHUB_ACTIONS) {
-  console.log('[server] Loading configuration from .env');
+  Logger.log('[server] Loading configuration from .env');
   if (!existsSync('.env')) {
     throw new Error('Missing .env file at the root of the workspace');
   }

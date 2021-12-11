@@ -7,6 +7,7 @@ import { hideBin } from 'yargs/helpers';
 
 import { getDbConfig, buildDbUri } from '../src/config.js';
 import { BaseObject } from '../src/models/dbs/base.js';
+import Logger from '../src/utils/logger.js';
 
 const argv = yargs(hideBin(process.argv))
   .option('wipe', {
@@ -35,12 +36,12 @@ const argv = yargs(hideBin(process.argv))
 const client = new Client();
 
 const connectionUri = buildDbUri(getDbConfig());
-console.log(chalk`{yellow [INFO]} Connecting to ${connectionUri}`);
+Logger.log(chalk`{yellow [INFO]} Connecting to ${connectionUri}`);
 
 client.connectSync(connectionUri);
 
 if (argv.wipe) {
-  console.log(chalk`{yellow [INFO]} Wiping db`);
+  Logger.log(chalk`{yellow [INFO]} Wiping db`);
   client.querySync(`
     DROP SCHEMA public CASCADE;
     CREATE SCHEMA public;
@@ -52,7 +53,7 @@ if (argv.wipe) {
 
   client.querySync(schema);
 } else {
-  console.log(chalk`{yellow [INFO]} Truncating db`);
+  Logger.log(chalk`{yellow [INFO]} Truncating db`);
 
   client.querySync(
     `TRUNCATE TABLE ${BaseObject.TABLE} RESTART IDENTITY CASCADE;`,
@@ -78,7 +79,7 @@ if (argv.dataFile) {
             item.insertSync(client);
           } catch (error) {
             const errorMessage = error.stack.split('\n')[0];
-            console.error(chalk.red.bold(errorMessage));
+            Logger.error(chalk.red.bold(errorMessage));
           }
         });
       } finally {

@@ -1,4 +1,5 @@
 import { compare, hash } from 'bcrypt';
+import Logger from '../utils/logger.js';
 
 export default class User {
   static get table() {
@@ -183,8 +184,8 @@ export default class User {
         )} FROM user_ WHERE username = '${username}'`,
       );
     } catch (error) {
-      console.error('An error occured while fetching data');
-      console.error(error);
+      Logger.error('An error occured while fetching data');
+      Logger.error(error);
       throw error;
     }
 

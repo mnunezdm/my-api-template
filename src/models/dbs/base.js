@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import Logger from '../../utils/logger.js';
 
 export class BaseObject {
   static TABLE = '';
@@ -62,7 +63,7 @@ export class BaseObject {
 
   insertSync(db) {
     const row = this.toRow();
-    console.info(
+    Logger.info(
       chalk`{dim [FINE] Inserting to ${this.constructor.TABLE} with '${this.insertString}'}`,
     );
     const { id } = db.querySync(this.insertString, row)[0];
@@ -71,7 +72,7 @@ export class BaseObject {
 
   async insert(db) {
     const row = this.toRow();
-    console.info(
+    Logger.info(
       chalk`{dim [FINE] Inserting to ${this.constructor.TABLE} with '${this.insertString}'}`,
     );
     const { id } = (await db.query(this.insertString, row)).rows[0];
