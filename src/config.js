@@ -1,13 +1,16 @@
+import { existsSync } from 'fs';
+import dotenv from 'dotenv';
+
 if (process.env.NODE_ENV !== 'production' && !process.env.GITHUB_ACTIONS) {
   console.log('[server] Loading configuration from .env');
-  const fs = require('fs');
-  if (!fs.existsSync('.env')) {
+  if (!existsSync('.env')) {
     throw new Error('Missing .env file at the root of the workspace');
   }
-  require('dotenv').config();
+
+  dotenv.config();
 }
 
-const getDbConfig = () =>
+export const getDbConfig = () =>
   process.env.DATABASE_URL
     ? {
         connectionString: process.env.DATABASE_URL,
@@ -31,7 +34,7 @@ const getDbConfig = () =>
         },
       };
 
-const buildDbUri = config =>
+export const buildDbUri = config =>
   config.connectionString
     ? config.connectionString
     : `postgresql://${buildUserUri(config)}${config.host}/${config.database}`;
@@ -42,9 +45,4 @@ const buildUserUri = config => {
     result = `${config.user || ''}:${config.password || ''}@`;
   }
   return result;
-};
-
-module.exports = {
-  buildDbUri,
-  getDbConfig,
 };

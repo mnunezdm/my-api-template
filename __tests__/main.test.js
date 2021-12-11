@@ -1,8 +1,8 @@
-const { Pool } = require('../src/models/database');
-const supertest = require('supertest');
+import { Pool } from '../src/models/database.js';
+import supertest from 'supertest';
 
-const { getDbConfig } = require('../src/config');
-const { buildExpressApp } = require('../server');
+import { getDbConfig } from '../src/config.js';
+import { buildExpressApp } from '../server.js';
 
 describe('general tests', () => {
   const db = new Pool(getDbConfig());

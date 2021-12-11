@@ -1,6 +1,6 @@
-const chalk = require('chalk');
+import chalk from 'chalk';
 
-class BaseObject {
+export class BaseObject {
   static TABLE = '';
 
   static get fields() {
@@ -133,7 +133,3 @@ class BaseObject {
 }
 
 class ResourceNotFoundError extends Error {}
-
-module.exports = {
-  BaseObject,
-};

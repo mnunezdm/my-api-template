@@ -1,13 +1,14 @@
-const Client = require('pg-native');
-const csvParser = require('csv-parser');
-const fs = require('fs');
-const chalk = require('chalk');
-const yargs = require('yargs');
+import Client from 'pg-native';
+import csvParser from 'csv-parser';
+import { accessSync, constants, readFileSync, createReadStream } from 'fs';
+import chalk from 'chalk';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
-const { getDbConfig, buildDbUri } = require('../src/config');
-const { BaseObject } = require('../src/models/dbs/base');
+import { getDbConfig, buildDbUri } from '../src/config.js';
+import { BaseObject } from '../src/models/dbs/base.js';
 
-const argv = yargs
+const argv = yargs(hideBin(process.argv))
   .option('wipe', {
     alias: 'w',
     description:
@@ -27,7 +28,7 @@ const argv = yargs
     description: 'CSV file containing the data to be loaded',
     type: 'string',
   })
-  .check(argv => fs.accessSync(argv.schema, fs.constants.R_OK) || true)
+  .check(argv => accessSync(argv.schema, constants.R_OK) || true)
   .help()
   .alias('help', 'h').argv;
 
@@ -47,7 +48,7 @@ if (argv.wipe) {
     GRANT ALL ON SCHEMA public TO public;
   `);
 
-  const schema = fs.readFileSync(argv.schema, { encoding: 'utf8', flag: 'r' });
+  const schema = readFileSync(argv.schema, { encoding: 'utf8', flag: 'r' });
 
   client.querySync(schema);
 } else {
@@ -60,7 +61,7 @@ if (argv.wipe) {
 
 if (argv.dataFile) {
   const data = [];
-  fs.createReadStream(`data/${argv.dataFile}`)
+  createReadStream(`data/${argv.dataFile}`)
     .pipe(
       csvParser({
         separator: ',',

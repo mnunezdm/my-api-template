@@ -1,6 +1,7 @@
-const User = require('../src/models/user');
+import User from '../src/models/user.js';
 
-const { Client } = require('pg');
+import pg from 'pg';
+import { jest } from '@jest/globals';
 
 const resetMocks = () => {
   jest.clearAllMocks();
@@ -32,8 +33,8 @@ describe('user tests (mocked db)', () => {
 
   it('insert user', async () => {
     expect.assertions(1);
-    let client = new Client();
-    client.query.mockResolvedValueOnce({ rows: [{ id: 1 }] });
+    let client = new pg.Client();
+    client.query = jest.fn().mockResolvedValueOnce({ rows: [{ id: 1 }] });
     const user = new User();
     user.username = 'test_user';
     user.password = '123456';
@@ -52,20 +53,24 @@ describe('user tests (mocked db)', () => {
 
   it('query user with id', async () => {
     expect.assertions(1);
-    let client = new Client();
-    client.query.mockResolvedValueOnce(
-      Promise.resolve({ rows: [{ id: 1, username: 'test' }] }),
-    );
+    let client = new pg.Client();
+    client.query = jest
+      .fn()
+      .mockResolvedValueOnce(
+        Promise.resolve({ rows: [{ id: 1, username: 'test' }] }),
+      );
     expect(await User.getById(1, client)).toHaveProperty('constructor', User);
     resetMocks();
   });
 
   it('query user with username', async () => {
     expect.assertions(1);
-    let client = new Client();
-    client.query.mockResolvedValueOnce(
-      Promise.resolve({ rows: [{ id: 1, username: 'test' }] }),
-    );
+    let client = new pg.Client();
+    client.query = jest
+      .fn()
+      .mockResolvedValueOnce(
+        Promise.resolve({ rows: [{ id: 1, username: 'test' }] }),
+      );
     expect(await User.getByUsername(1, client)).toHaveProperty(
       'constructor',
       User,
@@ -75,10 +80,10 @@ describe('user tests (mocked db)', () => {
 
   it('query user with username not found', async () => {
     expect.assertions(1);
-    let client = new Client();
-    client.query.mockResolvedValueOnce(
-      Promise.resolve({ rows: [], rowCount: 0 }),
-    );
+    let client = new pg.Client();
+    client.query = jest
+      .fn()
+      .mockResolvedValueOnce(Promise.resolve({ rows: [], rowCount: 0 }));
 
     await expect(User.getByUsername(1, client)).rejects.toThrow(
       'USER_NOT_FOUND',
@@ -89,8 +94,8 @@ describe('user tests (mocked db)', () => {
 
   it('check password invalid', async () => {
     expect.assertions(1);
-    let client = new Client();
-    client.query.mockResolvedValueOnce({
+    let client = new pg.Client();
+    client.query = jest.fn().mockResolvedValueOnce({
       rows: [{ id: 1, username: 'test', password: 'invalid' }],
     });
     const user = await User.getByUsername(1, client);
@@ -105,8 +110,8 @@ describe('user tests (mocked db)', () => {
     expect.assertions(1);
     const password = 'valid';
     const hashedPassword = await User.hashPassword(password);
-    let client = new Client();
-    client.query.mockResolvedValueOnce({
+    let client = new pg.Client();
+    client.query = jest.fn().mockResolvedValueOnce({
       rows: [{ id: 1, username: 'test', password: hashedPassword }],
     });
     const user = await User.getByUsername(1, client);

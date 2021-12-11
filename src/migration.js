@@ -8,6 +8,6 @@ async function wipeDb(db) {
   `);
 }
 
-module.exports = {
+export default {
   wipeDb,
 };

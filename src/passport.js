@@ -1,5 +1,5 @@
-const LocalStrategy = require('passport-local').Strategy;
-const User = require('./models/user');
+import { Strategy as LocalStrategy } from 'passport-local';
+import User from './models/user.js';
 
 /**
  *
@@ -31,4 +31,4 @@ function initialize(passport, db) {
   );
 }
 
-module.exports = initialize;
+export default initialize;

@@ -1,7 +1,8 @@
-const { Pool } = require('../src/models/database');
-const supertest = require('supertest');
+import { Pool } from '../src/models/database.js';
+import supertest from 'supertest';
 
-const { buildExpressApp } = require('../server');
+import { buildExpressApp } from '../server.js';
+import { jest } from '@jest/globals';
 
 const resetMocks = () => {
   jest.clearAllMocks();
@@ -23,7 +24,7 @@ describe('data tests', () => {
   it('fetch data', async () => {
     expect.assertions(2);
 
-    db.query.mockResolvedValueOnce({ rows: [{ id: 1 }] });
+    db.query = jest.fn().mockResolvedValueOnce({ rows: [{ id: 1 }] });
 
     const response = await request
       .post('/graphql')

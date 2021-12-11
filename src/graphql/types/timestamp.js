@@ -1,8 +1,8 @@
 /**
  * @from https://gist.github.com/langpavel/b30f3d507a47713b0c6e89016e4e9eb7
  */
-const Kind = require('graphql/language').Kind;
-const GraphQLScalarType = require('graphql').GraphQLScalarType;
+import { Kind } from 'graphql/language/index.mjs';
+import { GraphQLScalarType } from 'graphql';
 
 function serializeDate(value) {
   if (value instanceof Date) {
@@ -37,7 +37,7 @@ function parseDateFromLiteral(ast) {
   return null;
 }
 
-const GraphQLTimestamp = new GraphQLScalarType({
+export const GraphQLTimestamp = new GraphQLScalarType({
   name: 'Timestamp',
   description:
     'The javascript `Date` as integer. Type represents date and time ' +
@@ -47,7 +47,3 @@ const GraphQLTimestamp = new GraphQLScalarType({
   parseValue: parseDate,
   parseLiteral: parseDateFromLiteral,
 });
-
-module.exports = {
-  GraphQLTimestamp,
-};

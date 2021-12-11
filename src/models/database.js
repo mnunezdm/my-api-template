@@ -1,6 +1,8 @@
-const PgPool = require('pg').Pool;
+import pg from 'pg';
 
-class Pool extends PgPool {
+const PgPool = pg.Pool;
+
+export class Pool extends PgPool {
   get connected() {
     return Boolean(
       this._clients.filter(client => client._connected || client._connecting)
@@ -8,7 +10,3 @@ class Pool extends PgPool {
     );
   }
 }
-
-module.exports = {
-  Pool,
-};

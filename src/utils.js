@@ -1,14 +1,14 @@
-const fs = require('fs');
+import { readFile as _readFile } from 'fs';
 
 function readFile(fileName) {
   return new Promise((resolve, reject) => {
-    fs.readFile(fileName, { encoding: 'utf8', flag: 'r' }, (err, data) => {
+    _readFile(fileName, { encoding: 'utf8', flag: 'r' }, (err, data) => {
       if (err) reject(data);
       else resolve(data);
     });
   });
 }
 
-module.exports = {
+export default {
   readFile,
 };

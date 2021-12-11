@@ -4,10 +4,10 @@ const devDependencies = Object.keys(packageJson.devDependencies || {});
 module.exports = {
   env: {
     browser: true,
-    commonjs: true,
     es2020: true,
     'jest/globals': true,
     node: true,
+    module: true,
   },
   plugins: ['jest'],
   extends: ['eslint:recommended', 'plugin:jest/all', 'plugin:node/recommended'],

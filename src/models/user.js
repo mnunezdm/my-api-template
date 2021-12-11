@@ -1,6 +1,6 @@
-const bcrypt = require('bcrypt');
+import { compare, hash } from 'bcrypt';
 
-class User {
+export default class User {
   static get table() {
     return 'user_';
   }
@@ -129,7 +129,7 @@ class User {
   }
 
   async checkPassword(password) {
-    if (!(await bcrypt.compare(password, this.password))) {
+    if (!(await compare(password, this.password))) {
       throw new Error('INVALID_PASSWORD');
     }
   }
@@ -238,8 +238,6 @@ class User {
   }
 
   static async hashPassword(password) {
-    return await bcrypt.hash(password, 10);
+    return await hash(password, 10);
   }
 }
-
-module.exports = User;

@@ -1,28 +1,28 @@
-const fs = require('fs');
-const https = require('https');
+import { readFileSync } from 'fs';
+import { createServer } from 'https';
+import esMain from 'es-main';
+import cors from 'cors';
+import chalk from 'chalk';
 
-const chalk = require('chalk');
+import express from 'express';
+import { graphqlHTTP } from 'express-graphql';
+import passport from 'passport';
+import session from 'express-session';
+import connectPgSimple from 'connect-pg-simple';
 
-const express = require('express');
-const { graphqlHTTP } = require('express-graphql');
-const passport = require('passport');
-const session = require('express-session');
-const pgSession = require('connect-pg-simple')(session);
+import { Pool } from './src/models/database.js';
 
-const { Pool } = require('./src/models/database');
+import { getDbConfig } from './src/config.js';
+import { schema } from './src/graphql/schema.js';
+import { errorNoDbConnection, startGraphqlMessage } from './src/labels.js';
 
-const { getDbConfig } = require('./src/config');
-const { schema } = require('./src/graphql/schema');
-const labels = require('./src/labels');
+import initializePassport from './src/passport.js';
+import User from './src/models/user.js';
 
-const cors = require('cors');
-
+const pgSession = connectPgSimple(session);
 const rootValue = {
   ip: (_, request) => request.ip,
 };
-
-const initializePassport = require('./src/passport');
-const User = require('./src/models/user');
 
 const assureDbConnected = (_, response, next, db) => {
   if (!db.connected) {
@@ -30,7 +30,7 @@ const assureDbConnected = (_, response, next, db) => {
       .status(500)
       .set('Content-Type', 'application/json')
       .send({
-        errors: [{ message: labels.errorNoDbConnection }],
+        errors: [{ message: errorNoDbConnection }],
       });
   } else {
     next();
@@ -55,7 +55,7 @@ const assureConnected = (request, response, next) => {
   }
 };
 
-const buildExpressApp = db => {
+export const buildExpressApp = db => {
   const app = express();
 
   initializePassport(passport, db);
@@ -173,7 +173,7 @@ const buildExpressApp = db => {
   return app;
 };
 
-if (require.main === module) {
+if (esMain(import.meta)) {
   const db = new Pool(getDbConfig());
 
   db.connect()
@@ -188,33 +188,26 @@ if (require.main === module) {
 
   app.listen(portNumber, () => {
     console.log(
-      `[server] ${labels.startGraphqlMessage} http://localhost:${portNumber}/graphql`,
+      `[server] ${startGraphqlMessage} http://localhost:${portNumber}/graphql`,
     );
   });
 
   try {
-    https
-      .createServer(
-        {
-          key: fs.readFileSync('server.key'),
-          cert: fs.readFileSync('server.cert'),
-        },
-        app,
-      )
-      .listen(portNumber + 1, () => {
-        console.log(
-          `[server] ${
-            labels.startGraphqlMessage
-          } https://localhost:${portNumber + 1}/graphql`,
-        );
-      });
+    createServer(
+      {
+        key: readFileSync('server.key'),
+        cert: readFileSync('server.cert'),
+      },
+      app,
+    ).listen(portNumber + 1, () => {
+      console.log(
+        `[server] ${startGraphqlMessage} https://localhost:${portNumber +
+          1}/graphql`,
+      );
+    });
   } catch (e) {
     console.warn(
       chalk.magenta`[warning] Could not start https server: ${e.message}`,
     );
   }
 }
-
-module.exports = {
-  buildExpressApp,
-};

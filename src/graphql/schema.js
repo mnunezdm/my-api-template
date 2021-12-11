@@ -1,6 +1,6 @@
-const { GraphQLObjectType, GraphQLSchema, GraphQLInt } = require('graphql');
+import { GraphQLObjectType, GraphQLSchema, GraphQLInt } from 'graphql';
 
-const joinMonster = require('join-monster');
+import joinMonster from 'join-monster';
 
 const query = db =>
   new GraphQLObjectType({
@@ -30,8 +30,4 @@ const query = db =>
     }),
   });
 
-const schema = db => new GraphQLSchema({ query: query(db) });
-
-module.exports = {
-  schema,
-};
+export const schema = db => new GraphQLSchema({ query: query(db) });
