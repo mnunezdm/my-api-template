@@ -1,4 +1,3 @@
-import { Pool } from '../src/models/database.js';
 import supertest from 'supertest';
 
 import { buildExpressApp } from '../server.js';
@@ -8,15 +7,11 @@ const resetMocks = () => {
   jest.clearAllMocks();
 };
 
-jest.mock('../src/models/database', () => ({
-  Pool: jest.fn(() => ({
+describe('data tests', () => {
+  const db = {
     query: jest.fn(),
     connected: true,
-  })),
-}));
-
-describe('data tests', () => {
-  const db = new Pool();
+  };
   const app = buildExpressApp(db, true);
   const server = app.listen(process.env.PORT);
   const request = supertest(app);
@@ -24,7 +19,7 @@ describe('data tests', () => {
   it('fetch data', async () => {
     expect.assertions(2);
 
-    db.query = jest.fn().mockResolvedValueOnce({ rows: [{ id: 1 }] });
+    db.query.mockResolvedValue({ rows: [{ id: 1 }] });
 
     const response = await request
       .post('/graphql')

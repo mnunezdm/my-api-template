@@ -38,7 +38,7 @@ describe('user tests (mocked db)', () => {
     const user = new User();
     user.username = 'test_user';
     user.password = '123456';
-    expect(await user.create(client)).toHaveProperty('id', 1);
+    await expect(user.create(client)).resolves.toHaveProperty('id', 1);
     resetMocks();
   });
 
@@ -59,7 +59,10 @@ describe('user tests (mocked db)', () => {
       .mockResolvedValueOnce(
         Promise.resolve({ rows: [{ id: 1, username: 'test' }] }),
       );
-    expect(await User.getById(1, client)).toHaveProperty('constructor', User);
+    await expect(User.getById(1, client)).resolves.toHaveProperty(
+      'constructor',
+      User,
+    );
     resetMocks();
   });
 
@@ -71,7 +74,7 @@ describe('user tests (mocked db)', () => {
       .mockResolvedValueOnce(
         Promise.resolve({ rows: [{ id: 1, username: 'test' }] }),
       );
-    expect(await User.getByUsername(1, client)).toHaveProperty(
+    await expect(User.getByUsername(1, client)).resolves.toHaveProperty(
       'constructor',
       User,
     );
@@ -116,7 +119,7 @@ describe('user tests (mocked db)', () => {
     });
     const user = await User.getByUsername(1, client);
 
-    expect(await user.checkPassword(password)).toBeUndefined();
+    await expect(user.checkPassword(password)).resolves.toBeUndefined();
     resetMocks();
   });
 });
